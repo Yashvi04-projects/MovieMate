@@ -1,0 +1,329 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MovieMate API",
+    "description": "REST API for MovieMate Movie Ticket Booking Application - QA Testing Internship Project",
+    "version": "1.0.0",
+    "contact": {
+      "name": "MovieMate Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication endpoints" },
+    { "name": "Movies", "description": "Movie listing and details" },
+    { "name": "Booking", "description": "Seat booking operations" },
+    { "name": "Payment", "description": "Payment processing" },
+    { "name": "Profile", "description": "User profile management" }
+  ],
+  "paths": {
+    "/api/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": { "type": "string", "example": "John" },
+                  "email": { "type": "string", "example": "john@gmail.com" },
+                  "password": { "type": "string", "example": "123456" },
+                  "mobile": { "type": "string", "example": "9876543210" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Registered Successfully" },
+          "400": { "description": "Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "example": "test@gmail.com" },
+                  "password": { "type": "string", "example": "Test123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful with JWT token" },
+          "401": { "description": "Unauthorized" },
+          "400": { "description": "Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/movies": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Get all movies",
+        "parameters": [
+          { "name": "genre", "in": "query", "schema": { "type": "string" } },
+          { "name": "trending", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "upcoming", "in": "query", "schema": { "type": "boolean" } }
+        ],
+        "responses": {
+          "200": { "description": "List of movies" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "post": {
+        "tags": ["Movies"],
+        "summary": "Create a movie (Auth required)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Movie created" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/movies/search": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Search movies by name or genre",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Search query" },
+          { "name": "genre", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Search results" },
+          "400": { "description": "Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/movies/{id}": {
+      "get": {
+        "tags": ["Movies"],
+        "summary": "Get movie by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Movie details" },
+          "404": { "description": "Movie not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "put": {
+        "tags": ["Movies"],
+        "summary": "Update movie (Auth required)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Movie updated" },
+          "404": { "description": "Movie not found" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "delete": {
+        "tags": ["Movies"],
+        "summary": "Delete movie (Auth required)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Movie deleted" },
+          "404": { "description": "Movie not found" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/booking": {
+      "post": {
+        "tags": ["Booking"],
+        "summary": "Create a booking",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": { "type": "string", "example": "1" },
+                  "movieId": { "type": "string", "example": "1" },
+                  "seat": { "type": "string", "example": "A1" },
+                  "seats": { "type": "array", "items": { "type": "string" } },
+                  "amount": { "type": "number", "example": 250 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Booking confirmed" },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Movie not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/booking/user/{userId}": {
+      "get": {
+        "tags": ["Booking"],
+        "summary": "Get booking history for user",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Booking history" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/booking/{id}": {
+      "get": {
+        "tags": ["Booking"],
+        "summary": "Get booking by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Booking details" },
+          "404": { "description": "Booking not found" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "delete": {
+        "tags": ["Booking"],
+        "summary": "Cancel booking",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Booking cancelled" },
+          "404": { "description": "Booking not found" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/payment": {
+      "post": {
+        "tags": ["Payment"],
+        "summary": "Process payment",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": { "type": "number", "example": 250 },
+                  "method": { "type": "string", "enum": ["credit_card", "upi"] },
+                  "cardNumber": { "type": "string" },
+                  "cvv": { "type": "string" },
+                  "upiId": { "type": "string" },
+                  "bookingId": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Payment successful" },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "tags": ["Profile"],
+        "summary": "Get user profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Profile details" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "put": {
+        "tags": ["Profile"],
+        "summary": "Update user profile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "mobile": { "type": "string" },
+                  "profileImage": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profile updated" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "delete": {
+        "tags": ["Profile"],
+        "summary": "Delete user account",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Account deleted" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

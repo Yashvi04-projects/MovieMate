@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "userId": "1",
+    "movieId": "1",
+    "movieName": "Inception",
+    "seats": ["A1", "A2"],
+    "amount": 500,
+    "status": "confirmed",
+    "bookingDate": "2026-03-15T10:30:00.000Z"
+  },
+  {
+    "id": "2",
+    "userId": "1",
+    "movieId": "3",
+    "movieName": "Interstellar",
+    "seats": ["B5"],
+    "amount": 250,
+    "status": "confirmed",
+    "bookingDate": "2026-03-10T14:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "userId": "2",
+    "movieId": "2",
+    "movieName": "The Dark Knight",
+    "seats": ["C3", "C4"],
+    "amount": 500,
+    "status": "confirmed",
+    "bookingDate": "2026-03-12T18:45:00.000Z"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "name": "Test User",
+    "email": "test@gmail.com",
+    "password": "$2a$10$8K1p/a0dL1LXMIgoEDFrwOfMQ6qK8qJ8qJ8qJ8qJ8qJ8qJ8qJ8qJ8q",
+    "passwordPlain": "Test123",
+    "mobile": "9876543210",
+    "profileImage": null
+  },
+  {
+    "id": "2",
+    "name": "Demo User",
+    "email": "demo@gmail.com",
+    "password": "$2a$10$8K1p/a0dL1LXMIgoEDFrwOfMQ6qK8qJ8qJ8qJ8qJ8qJ8qJ8qJ8qJ8q",
+    "passwordPlain": "Demo123",
+    "mobile": "9123456789",
+    "profileImage": null
+  }
+]

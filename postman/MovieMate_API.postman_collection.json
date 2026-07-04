@@ -1,0 +1,322 @@
+{
+  "info": {
+    "name": "MovieMate API Collection",
+    "description": "Postman collection for MovieMate REST API - QA Testing Internship",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John\",\n  \"email\": \"john@gmail.com\",\n  \"password\": \"123456\",\n  \"mobile\": \"9876543210\"\n}"
+            },
+            "url": "{{baseUrl}}/api/register"
+          }
+        },
+        {
+          "name": "Login - Test User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@gmail.com\",\n  \"password\": \"Test123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/login"
+          }
+        },
+        {
+          "name": "Login - Demo User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@gmail.com\",\n  \"password\": \"Demo123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/login"
+          }
+        },
+        {
+          "name": "Login - Invalid Credentials (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"wrong@gmail.com\",\n  \"password\": \"wrong\"\n}"
+            },
+            "url": "{{baseUrl}}/api/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Movies",
+      "item": [
+        {
+          "name": "Get All Movies",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/movies"
+          }
+        },
+        {
+          "name": "Get Trending Movies",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/movies?trending=true"
+          }
+        },
+        {
+          "name": "Get Upcoming Movies",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/movies?upcoming=true"
+          }
+        },
+        {
+          "name": "Get Movie by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/movies/1"
+          }
+        },
+        {
+          "name": "Get Movie - Not Found (404)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/movies/999"
+          }
+        },
+        {
+          "name": "Search Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/movies/search?q=Inception",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "movies", "search"],
+              "query": [{ "key": "q", "value": "Inception" }]
+            }
+          }
+        },
+        {
+          "name": "Create Movie (Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Movie\",\n  \"genre\": \"Action\",\n  \"duration\": \"120 min\",\n  \"rating\": 7.5,\n  \"description\": \"Test movie\",\n  \"poster\": \"https://via.placeholder.com/300\",\n  \"trailerUrl\": \"https://youtube.com\",\n  \"releaseDate\": \"2026-01-01\"\n}"
+            },
+            "url": "{{baseUrl}}/api/movies"
+          }
+        },
+        {
+          "name": "Update Movie (Auth)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 9.5\n}"
+            },
+            "url": "{{baseUrl}}/api/movies/1"
+          }
+        },
+        {
+          "name": "Delete Movie (Auth)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/api/movies/10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"1\",\n  \"movieId\": \"1\",\n  \"seats\": [\"A1\", \"A2\"],\n  \"amount\": 500\n}"
+            },
+            "url": "{{baseUrl}}/api/booking"
+          }
+        },
+        {
+          "name": "Get Booking History",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/api/booking/user/1"
+          }
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/api/booking/1"
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/api/booking/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment",
+      "item": [
+        {
+          "name": "Process Payment - Credit Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250,\n  \"method\": \"credit_card\",\n  \"cardNumber\": \"4111111111111111\",\n  \"cvv\": \"123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/payment"
+          }
+        },
+        {
+          "name": "Process Payment - UPI",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500,\n  \"method\": \"upi\",\n  \"upiId\": \"user@upi\"\n}"
+            },
+            "url": "{{baseUrl}}/api/payment"
+          }
+        },
+        {
+          "name": "Payment - Missing Amount (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/payment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/api/profile"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"mobile\": \"9999999999\"\n}"
+            },
+            "url": "{{baseUrl}}/api/profile"
+          }
+        },
+        {
+          "name": "Get Profile - Unauthorized (401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/profile"
+          }
+        }
+      ]
+    }
+  ]
+}
