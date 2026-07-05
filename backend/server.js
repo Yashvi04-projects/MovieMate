@@ -1,3 +1,4 @@
+const os = require('os');
 const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
@@ -11,6 +12,7 @@ const profileRoutes = require('./routes/profile');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 app.use(cors());
 app.use(express.json());
@@ -60,11 +62,32 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+function getNetworkAddresses() {
+  const addresses = [];
+  for (const interfaces of Object.values(os.networkInterfaces())) {
+    for (const iface of interfaces) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        addresses.push(iface.address);
+      }
+    }
+  }
+  return addresses;
+}
+
+app.listen(PORT, HOST, () => {
+  const networkIps = getNetworkAddresses();
   console.log('='.repeat(50));
   console.log('  MovieMate API Server');
-  console.log(`  Running on http://localhost:${PORT}`);
-  console.log(`  Swagger Docs: http://localhost:${PORT}/api-docs`);
+  console.log(`  Local:   http://localhost:${PORT}`);
+  if (networkIps.length > 0) {
+    networkIps.forEach((ip) => {
+      console.log(`  Network: http://${ip}:${PORT}`);
+    });
+  } else {
+    console.log(`  Network: http://<YOUR_PC_IP>:${PORT}`);
+  }
+  console.log(`  Swagger: http://localhost:${PORT}/api-docs`);
+  console.log('  Tip: Phone and PC must be on the same Wi-Fi/hotspot');
   console.log('='.repeat(50));
 });
 
